@@ -1028,3 +1028,14 @@ export function onReloadAndProfileFlagsReset(): void {
   sessionStorageRemoveItem(SESSION_STORAGE_RECORD_CHANGE_DESCRIPTIONS_KEY);
   sessionStorageRemoveItem(SESSION_STORAGE_RECORD_TIMELINE_KEY);
 }
+
+export function goToSource(url: string): void {
+  const BASE_URL = 'http://devtool:9999';
+  fetch(BASE_URL, {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json'
+    },
+    body: JSON.stringify({ url }),
+  });
+}

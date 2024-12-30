@@ -17,6 +17,7 @@ import Skeleton from './Skeleton';
 
 import type {Source as InspectedElementSource} from 'react-devtools-shared/src/shared/types';
 import styles from './InspectedElementSourcePanel.css';
+import { goToSource } from '../../../utils';
 
 type Props = {
   source: InspectedElementSource,
@@ -33,6 +34,10 @@ function InspectedElementSourcePanel({
         <div className={styles.SourceHeader}>source</div>
 
         <React.Suspense fallback={<Skeleton height={16} width={16} />}>
+          <GotoSourceButton
+            source={source}
+            symbolicatedSourcePromise={symbolicatedSourcePromise}
+          />
           <CopySourceButton
             source={source}
             symbolicatedSourcePromise={symbolicatedSourcePromise}
@@ -52,6 +57,29 @@ function InspectedElementSourcePanel({
         />
       </React.Suspense>
     </div>
+  );
+}
+
+function GotoSourceButton({source, symbolicatedSourcePromise}: Props) {
+  const symbolicatedSource = React.use(symbolicatedSourcePromise);
+  if (symbolicatedSource == null) {
+    const {sourceURL, line, column} = source;
+    const handleClick = () => goToSource(`${sourceURL}:${line}:${column}`);
+
+    return (
+      <Button onClick={handleClick} title="Open in editor">
+        <ButtonIcon type="editor" />
+      </Button>
+    );
+  }
+
+  const {sourceURL, line, column} = symbolicatedSource;
+  const handleClick = () => goToSource(`${sourceURL}:${line}:${column}`);
+
+  return (
+    <Button onClick={handleClick} title="Open in editor">
+      <ButtonIcon type="editor" />
+    </Button>
   );
 }
 
